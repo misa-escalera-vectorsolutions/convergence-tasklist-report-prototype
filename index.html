@@ -1060,7 +1060,7 @@ const DATA = [
     id:3, employee:'Corriveau, Chris', employeeId:'0038027512',
     tasklist:'C - Power Transmission - Level 2 Observation', version:'1.9',
     location:'Shaw Plant 70 / Reliability Technician D', assignedStatus:'Assigned',
-    status:'Incomplete', tasksRequired:9, totalTasks:9, pct:0, timeSpent:'—',
+    status:'Not Started', tasksRequired:9, totalTasks:9, pct:0, timeSpent:'—',
     completedDate:null, createdOn:'Aug 3 2022',
     tasks:[
       {num:1,desc:'C - Power Transmission - Belt Drive System: Demonstrate the ability to properly measure/size an unknown belt missing from a power transmission system',req:true,instr:null,emp:null,comment:''},
@@ -1293,15 +1293,12 @@ function renderGrid() {
   const thead = document.getElementById('grid-thead');
   const tbody = document.getElementById('grid-tbody');
 
-  thead.innerHTML = `<tr><th style="width:32px;"></th><th>Tasklist <i class="fa-solid fa-arrow-up" style="font-size:9px;opacity:.5;"></i></th><th>Employee</th><th>Location</th><th>Status</th><th>% Complete</th><th>Tasks Req.</th><th>Time Spent</th><th>Completed Date</th><th>Version</th><th>Assigned</th></tr>`;
+  thead.innerHTML = `<tr><th style="width:32px;"></th><th>Tasklist <i class="fa-solid fa-arrow-up" style="font-size:9px;opacity:.5;"></i></th><th>Employee</th><th>Location</th><th>Status</th><th>% Complete</th><th>Tasks Req.</th><th>Time Spent</th><th>Completed Date</th><th>Assigned</th></tr>`;
 
   tbody.innerHTML = rows.map(row => {
     const isPassed = row.status === 'Passed';
     const completedCell = isPassed
       ? `<td style="font-weight:600;color:var(--text-secondary)">${row.completedDate || '—'}</td>`
-      : `<td>${badge(row.status)}</td>`;
-    const versionCell = isPassed
-      ? `<td style="color:var(--text-secondary)">v${row.version}</td>`
       : `<td>${badge(row.status)}</td>`;
     return `
       <tr class="master-row" onclick="toggleRow(${row.id},this)">
@@ -1316,11 +1313,10 @@ function renderGrid() {
         <td style="text-align:center;color:var(--text-secondary)">${row.tasksRequired}</td>
         <td style="color:var(--text-secondary)">${row.timeSpent}</td>
         ${completedCell}
-        ${versionCell}
         <td><span class="badge badge-assigned">${row.assignedStatus}</span></td>
       </tr>
       <tr class="detail-row" id="detail-${row.id}">
-        <td colspan="11" class="detail-cell">${renderDetail(row)}</td>
+        <td colspan="10" class="detail-cell">${renderDetail(row)}</td>
       </tr>`;
   }).join('');
 
