@@ -365,23 +365,6 @@ vaadin-button vwc-icon[slot="prefix"] {
 }
 
 
-/* ── Report Type Tabs ── */
-.report-type-bar {
-  display: flex; gap: 4px; margin-bottom: 18px;
-  background: #f1f5f9; border: 1px solid var(--border);
-  border-radius: 8px; padding: 3px; width: fit-content;
-}
-.report-type-tab {
-  padding: 5px 16px; font-size: 12.5px; font-weight: 600;
-  color: var(--text-secondary); border-radius: 6px;
-  cursor: pointer; transition: all .15s; border: none;
-  background: transparent; font-family: inherit;
-}
-.report-type-tab:hover { color: var(--text-primary); }
-.report-type-tab.active {
-  background: var(--bg); color: var(--primary);
-  box-shadow: 0 1px 4px rgba(0,0,0,.1);
-}
 
 /* ── Section Header ── */
 .section-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 10px; }
@@ -724,13 +707,6 @@ vaadin-button vwc-icon[slot="prefix"] {
             </button>
           </div>
           <div class="filter-divider"></div>
-          <div class="filter-group">
-            <label class="filter-label">Report Type</label>
-            <div class="filter-checkboxes" style="gap:10px;">
-              <label class="filter-radio-row"><input type="radio" name="rtype" checked onchange="setReportType('all')"> All Records</label>
-              <label class="filter-radio-row"><input type="radio" name="rtype" onchange="setReportType('completion')"> Completion Records Only</label>
-            </div>
-          </div>
           <div class="filter-group" id="status-filter-wrap">
             <label class="filter-label">Status Type</label>
             <div class="filter-checkboxes">
@@ -1044,7 +1020,6 @@ document.addEventListener('keydown', e => {
 });
 
 // ── Report Data ──
-let currentType = 'all';
 let currentPage = 1;
 const PAGE_SIZE = 10;
 
@@ -1274,15 +1249,15 @@ function signoff(s) {
   return `<div class="signoff-name-row"><span class="signoff-name">${primary.by}</span><button class="signoff-overflow-chip" data-overflow="${encoded}" onclick="toggleSignoffPopover(this)">+${overflow.length}</button></div><span class="signoff-date">${primary.date}</span>`;
 }
 function renderDetail(row) {
-  const isComp = currentType === 'completion';
+  const isPassed = row.status === 'Passed';
   const metaItems = `
     <div class="detail-meta"><strong>Employee:</strong> ${row.employee} (${row.employeeId})</div>
     <div class="detail-meta"><strong>Check-off Type:</strong> Instructor AND Employee</div>
     <div class="detail-meta"><strong>Tasks Required:</strong> ${row.tasksRequired} of ${row.totalTasks}</div>
     ${row.timeSpent && row.timeSpent !== '—' ? `<div class="detail-meta"><strong>Time Spent:</strong> ${row.timeSpent}</div>` : ''}
-    ${isComp && row.completedDate ? `<div class="detail-meta"><strong>Completed:</strong> ${row.completedDate}</div>` : ''}
-    ${isComp && row.createdOn ? `<div class="detail-meta"><strong>Tasklist Created:</strong> ${row.createdOn}</div>` : ''}
-    ${isComp ? `<div class="detail-meta"><strong>Completion Version:</strong> ${row.version}</div>` : ''}`;
+    ${isPassed && row.completedDate ? `<div class="detail-meta"><strong>Completed:</strong> ${row.completedDate}</div>` : ''}
+    ${isPassed && row.createdOn ? `<div class="detail-meta"><strong>Tasklist Created:</strong> ${row.createdOn}</div>` : ''}
+    ${isPassed ? `<div class="detail-meta"><strong>Completion Version:</strong> v${row.version}</div>` : ''}`;
   const hasSignoffs = row.tasks.some(t => t.instr || t.emp);
   const sigBtn = hasSignoffs
     ? `<vaadin-button theme="secondary" onclick="openSignaturesModal(${row.id})"><vwc-icon path="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" slot="prefix"></vwc-icon>View Signatures</vaadin-button>`
@@ -1308,8 +1283,7 @@ function renderDetail(row) {
 
 // ── Render Grid ──
 function renderGrid() {
-  const isComp = currentType === 'completion';
-  const allRows = isComp ? DATA.filter(r => r.status === 'Passed') : DATA;
+  const allRows = DATA;
   const totalRows = allRows.length;
   const totalPages = Math.ceil(totalRows / PAGE_SIZE);
   if (currentPage > totalPages) currentPage = totalPages;
@@ -1319,43 +1293,36 @@ function renderGrid() {
   const thead = document.getElementById('grid-thead');
   const tbody = document.getElementById('grid-tbody');
 
-  thead.innerHTML = isComp
-    ? `<tr><th style="width:32px;"></th><th>Tasklist <i class="fa-solid fa-arrow-up" style="font-size:9px;opacity:.5;"></i></th><th>Employee</th><th>Completed</th><th>Version</th><th>Time Spent</th><th>Status</th></tr>`
-    : `<tr><th style="width:32px;"></th><th>Tasklist <i class="fa-solid fa-arrow-up" style="font-size:9px;opacity:.5;"></i></th><th>Employee</th><th>Location</th><th>Status</th><th>% Complete</th><th>Tasks Req.</th><th>Time Spent</th><th>Assigned</th></tr>`;
+  thead.innerHTML = `<tr><th style="width:32px;"></th><th>Tasklist <i class="fa-solid fa-arrow-up" style="font-size:9px;opacity:.5;"></i></th><th>Employee</th><th>Location</th><th>Status</th><th>% Complete</th><th>Tasks Req.</th><th>Time Spent</th><th>Completed Date</th><th>Version</th><th>Assigned</th></tr>`;
 
   tbody.innerHTML = rows.map(row => {
-    const colspan = isComp ? 7 : 9;
-    const cells = isComp
-      ? `<td><div class="tasklist-name">${row.tasklist}</div><div class="tasklist-version">v${row.version} · Created ${row.createdOn}</div></td>
-         <td>${row.employee}</td>
-         <td style="font-weight:600;">${row.completedDate || '—'}</td>
-         <td style="color:var(--text-secondary)">v${row.version}</td>
-         <td style="color:var(--text-secondary)">${row.timeSpent}</td>
-         <td>${badge(row.status)}</td>`
-      : `<td><div class="tasklist-name">${row.tasklist}</div><div class="tasklist-version">Version ${row.version}</div></td>
-         <td>${row.employee}</td>
-         <td><div class="location-text">${row.location}</div></td>
-         <td>${badge(row.status)}</td>
-         <td>${progressBar(row.pct)}</td>
-         <td style="text-align:center;color:var(--text-secondary)">${row.tasksRequired}</td>
-         <td style="color:var(--text-secondary)">${row.timeSpent}</td>
-         <td><span class="badge badge-assigned">${row.assignedStatus}</span></td>`;
+    const isPassed = row.status === 'Passed';
+    const completedCell = isPassed
+      ? `<td style="font-weight:600;color:var(--text-secondary)">${row.completedDate || '—'}</td>`
+      : `<td>${badge(row.status)}</td>`;
+    const versionCell = isPassed
+      ? `<td style="color:var(--text-secondary)">v${row.version}</td>`
+      : `<td>${badge(row.status)}</td>`;
     return `
       <tr class="master-row" onclick="toggleRow(${row.id},this)">
         <td><button class="expand-btn" id="btn-${row.id}" onclick="event.stopPropagation();toggleRow(${row.id},this.closest('tr'))">
           <i class="fa-solid fa-chevron-right"></i>
         </button></td>
-        ${cells}
+        <td><div class="tasklist-name">${row.tasklist}</div><div class="tasklist-version">Version ${row.version}</div></td>
+        <td>${row.employee}</td>
+        <td><div class="location-text">${row.location}</div></td>
+        <td>${badge(row.status)}</td>
+        <td>${progressBar(row.pct)}</td>
+        <td style="text-align:center;color:var(--text-secondary)">${row.tasksRequired}</td>
+        <td style="color:var(--text-secondary)">${row.timeSpent}</td>
+        ${completedCell}
+        ${versionCell}
+        <td><span class="badge badge-assigned">${row.assignedStatus}</span></td>
       </tr>
       <tr class="detail-row" id="detail-${row.id}">
-        <td colspan="${colspan}" class="detail-cell">${renderDetail(row)}</td>
+        <td colspan="11" class="detail-cell">${renderDetail(row)}</td>
       </tr>`;
   }).join('');
-
-  const st = document.getElementById('section-title'); if (st) st.textContent = isComp ? 'Completion Records' : 'Detailed Report';
-  document.querySelectorAll('input[name="rtype"]').forEach((r,i) => { r.checked = i===0 ? !isComp : isComp; });
-  const sw = document.getElementById('status-filter-wrap');
-  if (sw) sw.style.display = isComp ? 'none' : '';
 
   // Pagination
   const pagEl = document.getElementById('grid-pagination');
@@ -1392,13 +1359,6 @@ function toggleRow(id, masterTr) {
   if (!isOpen) { detail.classList.add('open'); masterTr.classList.add('expanded'); btn.classList.add('open'); }
 }
 
-// ── Report type ──
-function setReportType(type) {
-  currentType = type;
-  document.getElementById('tab-all').classList.toggle('active', type==='all');
-  document.getElementById('tab-completion').classList.toggle('active', type==='completion');
-  renderGrid();
-}
 
 // ── Modals ──
 function openModal(id) { document.getElementById(id).classList.add('open'); }
