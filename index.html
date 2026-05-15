@@ -613,6 +613,54 @@ th:hover .col-filter-btn { opacity: .55; }
 /* ── Filter body scroll ── */
 .filter-body { flex: 1; padding: 14px 16px; display: flex; flex-direction: column; gap: 18px; overflow-y: auto; }
 
+/* ── Column Chooser ── */
+.col-chooser-wrap { position: relative; }
+.col-chooser-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 32px; padding: 0 14px;
+  border: 1.5px solid var(--primary); border-radius: 4px;
+  background: white; color: var(--primary);
+  font-size: 13px; font-weight: 600; font-family: inherit;
+  cursor: pointer; white-space: nowrap; transition: background .12s;
+}
+.col-chooser-btn:hover { background: var(--primary-light); }
+.col-chooser-btn i { font-size: 12px; }
+.col-chooser-panel {
+  position: absolute; top: calc(100% + 6px); right: 0;
+  width: 280px; background: white;
+  border: 1px solid var(--border); border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  z-index: 500; display: none; overflow: hidden;
+}
+.col-chooser-panel.open { display: block; }
+.col-chooser-hd {
+  padding: 10px 14px 9px; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.col-chooser-hd-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); }
+.col-chooser-search {
+  display: block; width: calc(100% - 24px); margin: 10px 12px 0;
+  padding: 6px 10px; border: 1px solid var(--border); border-radius: 4px;
+  font-size: 12px; font-family: inherit; color: var(--text-primary); outline: none;
+}
+.col-chooser-search:focus { border-color: var(--primary); }
+.col-chooser-actions { display: flex; gap: 6px; padding: 6px 14px 4px; }
+.col-chooser-act { background: none; border: none; color: var(--primary); cursor: pointer; font-size: 11px; font-family: inherit; padding: 0; }
+.col-chooser-act:hover { text-decoration: underline; }
+.col-chooser-sep { font-size: 11px; color: var(--border); }
+.col-chooser-list { max-height: 280px; overflow-y: auto; padding: 2px 0 8px; }
+.col-chooser-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 14px; cursor: pointer; transition: background .1s;
+}
+.col-chooser-row:hover { background: var(--bg-hover); }
+.col-chooser-row.locked { cursor: default; }
+.col-chooser-row.locked:hover { background: transparent; }
+.col-chooser-cb { cursor: pointer; accent-color: var(--primary); width: 14px; height: 14px; flex-shrink: 0; }
+.col-chooser-lbl { font-size: 12.5px; color: var(--text-primary); flex: 1; user-select: none; }
+.col-chooser-row.locked .col-chooser-lbl { color: var(--text-muted); }
+.col-chooser-lock { font-size: 9px; color: var(--text-muted); }
+
 /* ── Info Tooltips ── */
 .info-tip {
   display: inline-flex; align-items: center; justify-content: center;
@@ -718,6 +766,25 @@ th:hover .col-filter-btn { opacity: .55; }
                 <vwc-icon path="M19,21L12,18L5,21V5C5,3.89 5.9,3 7,3H17A2,2 0 0,1 19,5M17,5H7V17L12,14.82L17,17V5Z" slot="prefix"></vwc-icon>
                 Apply Saved View
               </vaadin-button>
+              <div class="col-chooser-wrap" id="colChooserWrap">
+                <button class="col-chooser-btn" onclick="toggleColChooser()">
+                  <i class="fa-solid fa-table-columns"></i>
+                  Configure Columns
+                </button>
+                <div class="col-chooser-panel" id="colChooserPanel">
+                  <div class="col-chooser-hd">
+                    <span class="col-chooser-hd-title">Column Chooser</span>
+                    <button class="info-tip" onclick="closeColChooser()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                  </div>
+                  <input type="text" class="col-chooser-search" id="colChooserSearch" placeholder="Search column" oninput="renderColChooserList(this.value)">
+                  <div class="col-chooser-actions">
+                    <button class="col-chooser-act" onclick="selectAllCols()">Select All</button>
+                    <span class="col-chooser-sep">|</span>
+                    <button class="col-chooser-act" onclick="clearAllCols()">Clear All</button>
+                  </div>
+                  <div class="col-chooser-list" id="colChooserList"></div>
+                </div>
+              </div>
               <button class="filter-reveal-btn" onclick="toggleFilterPanel()" title="Show filters" aria-label="Show filters">
                 <i class="fa-solid fa-filter"></i>
               </button>
@@ -1314,6 +1381,22 @@ const COL_CONFIGS = {
   assigned:        { label: 'Assigned',         type: 'check', options: ['Assigned', 'Enrolled'] }
 };
 
+const GRID_COLS = [
+  { key: '_expand',        label: '',                minWidth: 32,  locked: true },
+  { key: 'tasklist',       label: 'Tasklist',        filterKey: 'tasklist',       minWidth: 220, sortable: true, locked: true },
+  { key: 'employee',       label: 'Employee',        filterKey: 'employee',       minWidth: 140, locked: true },
+  { key: 'location',       label: 'Location',        filterKey: 'location',       minWidth: 180 },
+  { key: 'status',         label: 'Status',          filterKey: 'status',         minWidth: 100 },
+  { key: 'pct',            label: '% Complete',                                   minWidth: 110 },
+  { key: 'completedDate',  label: 'Completed Date',  filterKey: 'completedDate',  minWidth: 130 },
+  { key: 'timeSpent',      label: 'Time Spent',      filterKey: 'timeSpent',      minWidth: 110 },
+  { key: 'checkoffType',   label: 'Check-off Type',                               minWidth: 195 },
+  { key: 'tasksRequired',  label: 'Tasks Required',  filterKey: 'tasksRequired',  minWidth: 130 },
+  { key: 'assignmentDate', label: 'Assignment Date', filterKey: 'assignmentDate', minWidth: 140 },
+  { key: 'tasklistCreated',label: 'Tasklist Created',filterKey: 'tasklistCreated',minWidth: 150 },
+  { key: 'assigned',       label: 'Assigned',        filterKey: 'assigned',       minWidth: 100 },
+];
+
 const columnFilters = {
   tasklist: '', employee: '', location: '', status: [],
   completedDate: '', timeSpent: '', tasksRequired: '',
@@ -1321,6 +1404,7 @@ const columnFilters = {
 };
 
 let showOnlyLastAssigned = false;
+let hiddenCols = new Set();
 
 function getFilteredData() {
   let data = DATA;
@@ -1349,6 +1433,63 @@ function getFilteredData() {
 function toggleLastAssigned(checked) {
   showOnlyLastAssigned = checked;
   currentPage = 1;
+  renderGrid();
+}
+
+// ── Column Chooser ──
+const CHOOSER_COLS = GRID_COLS.filter(c => c.key !== '_expand');
+
+function toggleColChooser() {
+  const panel = document.getElementById('colChooserPanel');
+  const isOpen = panel.classList.toggle('open');
+  if (isOpen) {
+    document.getElementById('colChooserSearch').value = '';
+    renderColChooserList('');
+    document.addEventListener('click', _colChooserOutside, true);
+  } else {
+    document.removeEventListener('click', _colChooserOutside, true);
+  }
+}
+function closeColChooser() {
+  document.getElementById('colChooserPanel').classList.remove('open');
+  document.removeEventListener('click', _colChooserOutside, true);
+}
+function _colChooserOutside(e) {
+  if (!document.getElementById('colChooserWrap').contains(e.target)) closeColChooser();
+}
+function renderColChooserList(query) {
+  const q = (query || '').toLowerCase();
+  const list = document.getElementById('colChooserList');
+  list.innerHTML = CHOOSER_COLS
+    .filter(c => c.label.toLowerCase().includes(q))
+    .map(col => {
+      if (col.locked) {
+        return `<div class="col-chooser-row locked">
+          <input type="checkbox" class="col-chooser-cb" checked disabled>
+          <span class="col-chooser-lbl">${col.label}</span>
+          <span class="col-chooser-lock"><i class="fa-solid fa-lock"></i></span>
+        </div>`;
+      }
+      const visible = !hiddenCols.has(col.key);
+      return `<div class="col-chooser-row" onclick="toggleCol('${col.key}')">
+        <input type="checkbox" class="col-chooser-cb" ${visible ? 'checked' : ''} onclick="event.stopPropagation();toggleCol('${col.key}')">
+        <span class="col-chooser-lbl">${col.label}</span>
+      </div>`;
+    }).join('');
+}
+function toggleCol(key) {
+  if (hiddenCols.has(key)) hiddenCols.delete(key); else hiddenCols.add(key);
+  renderColChooserList(document.getElementById('colChooserSearch').value);
+  renderGrid();
+}
+function selectAllCols() {
+  hiddenCols.clear();
+  renderColChooserList(document.getElementById('colChooserSearch').value);
+  renderGrid();
+}
+function clearAllCols() {
+  GRID_COLS.filter(c => !c.locked && c.key !== '_expand').forEach(c => hiddenCols.add(c.key));
+  renderColChooserList(document.getElementById('colChooserSearch').value);
   renderGrid();
 }
 
@@ -1437,32 +1578,38 @@ function renderDetail(row) {
 
 // ── Build thead with column filter buttons ──
 function buildThead() {
-  function th(label, colKey, minWidth, sortIcon) {
-    if (!colKey) return `<th style="min-width:${minWidth}px;">${label}</th>`;
-    const cur = columnFilters[colKey];
+  const vis = GRID_COLS.filter(c => c.locked || !hiddenCols.has(c.key));
+  return '<tr>' + vis.map(col => {
+    if (col.key === '_expand') return `<th style="width:32px;"></th>`;
+    if (!col.filterKey) return `<th style="min-width:${col.minWidth}px;">${col.label}</th>`;
+    const cur = columnFilters[col.filterKey];
     const isActive = Array.isArray(cur) ? cur.length > 0 : cur !== '';
-    return `<th style="min-width:${minWidth}px;">
+    return `<th style="min-width:${col.minWidth}px;">
       <div class="th-inner">
-        <span class="th-label">${sortIcon ? `${label} <i class="fa-solid fa-arrow-up" style="font-size:9px;opacity:.5;"></i>` : label}</span>
-        <button class="col-filter-btn${isActive ? ' active' : ''}" data-col="${colKey}" onclick="openColFilter(event,'${colKey}')"><i class="fa-solid fa-filter"></i></button>
+        <span class="th-label">${col.sortable ? `${col.label} <i class="fa-solid fa-arrow-up" style="font-size:9px;opacity:.5;"></i>` : col.label}</span>
+        <button class="col-filter-btn${isActive ? ' active' : ''}" data-col="${col.filterKey}" onclick="openColFilter(event,'${col.filterKey}')"><i class="fa-solid fa-filter"></i></button>
       </div>
     </th>`;
+  }).join('') + '</tr>';
+}
+
+function buildCell(col, row) {
+  switch (col.key) {
+    case '_expand':        return `<td><button class="expand-btn" id="btn-${row.id}" onclick="event.stopPropagation();toggleRow(${row.id},this.closest('tr'))"><i class="fa-solid fa-chevron-right"></i></button></td>`;
+    case 'tasklist':       return `<td><div class="tasklist-name">${row.tasklist}</div><div class="tasklist-version">Version ${row.version}</div></td>`;
+    case 'employee':       return `<td>${row.employee}</td>`;
+    case 'location':       return `<td><div class="location-text">${row.location}</div></td>`;
+    case 'status':         return `<td>${badge(row.status)}</td>`;
+    case 'pct':            return `<td>${progressBar(row.pct)}</td>`;
+    case 'completedDate':  return `<td style="color:var(--text-secondary)">${row.completedDate || '—'}</td>`;
+    case 'timeSpent':      return `<td>${row.timeSpent}</td>`;
+    case 'checkoffType':   return `<td>Instructor AND Employee</td>`;
+    case 'tasksRequired':  return `<td>${row.tasksRequired} of ${row.totalTasks}</td>`;
+    case 'assignmentDate': return `<td>${row.assignedDate || '—'}</td>`;
+    case 'tasklistCreated':return `<td>${row.createdOn || '—'}</td>`;
+    case 'assigned':       return `<td><span class="badge badge-assigned">${row.assignedStatus}</span></td>`;
+    default:               return '<td></td>';
   }
-  return `<tr>
-    <th style="width:32px;"></th>
-    ${th('Tasklist', 'tasklist', 220, true)}
-    ${th('Employee', 'employee', 140)}
-    ${th('Location', 'location', 180)}
-    ${th('Status', 'status', 100)}
-    ${th('% Complete', null, 110)}
-    ${th('Completed Date', 'completedDate', 130)}
-    ${th('Time Spent', 'timeSpent', 110)}
-    ${th('Check-off Type', null, 195)}
-    ${th('Tasks Required', 'tasksRequired', 130)}
-    ${th('Assignment Date', 'assignmentDate', 140)}
-    ${th('Tasklist Created', 'tasklistCreated', 150)}
-    ${th('Assigned', 'assigned', 100)}
-  </tr>`;
 }
 
 // ── Render Grid ──
@@ -1479,27 +1626,14 @@ function renderGrid() {
 
   thead.innerHTML = buildThead();
 
+  const visCols = GRID_COLS.filter(c => c.locked || !hiddenCols.has(c.key));
   tbody.innerHTML = rows.map(row => {
     return `
       <tr class="master-row" onclick="toggleRow(${row.id},this)">
-        <td><button class="expand-btn" id="btn-${row.id}" onclick="event.stopPropagation();toggleRow(${row.id},this.closest('tr'))">
-          <i class="fa-solid fa-chevron-right"></i>
-        </button></td>
-        <td><div class="tasklist-name">${row.tasklist}</div><div class="tasklist-version">Version ${row.version}</div></td>
-        <td>${row.employee}</td>
-        <td><div class="location-text">${row.location}</div></td>
-        <td>${badge(row.status)}</td>
-        <td>${progressBar(row.pct)}</td>
-        <td style="color:var(--text-secondary)">${row.completedDate || '—'}</td>
-        <td>${row.timeSpent}</td>
-        <td>Instructor AND Employee</td>
-        <td>${row.tasksRequired} of ${row.totalTasks}</td>
-        <td>${row.assignedDate || '—'}</td>
-        <td>${row.createdOn || '—'}</td>
-        <td><span class="badge badge-assigned">${row.assignedStatus}</span></td>
+        ${visCols.map(col => buildCell(col, row)).join('')}
       </tr>
       <tr class="detail-row" id="detail-${row.id}">
-        <td colspan="13" class="detail-cell">${renderDetail(row)}</td>
+        <td colspan="${visCols.length}" class="detail-cell">${renderDetail(row)}</td>
       </tr>`;
   }).join('');
 
