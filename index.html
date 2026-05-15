@@ -45,7 +45,7 @@
   --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
   --radius: 6px;
   --radius-sm: 4px;
-  --passed-bg: #dcfce7; --passed-text: #15803d;
+  --complete-bg: #dcfce7; --complete-text: #15803d;
   --incomplete-bg: #f1f5f9; --incomplete-text: #475569;
   --not-started-bg: #f8fafc; --not-started-text: #64748b;
 }
@@ -418,7 +418,7 @@ vaadin-button vwc-icon[slot="prefix"] {
   padding: 3px 8px; border-radius: 3px;
   font-size: 11px; font-weight: 700; white-space: nowrap; letter-spacing: .02em;
 }
-.badge-passed { background: var(--passed-bg); color: var(--passed-text); }
+.badge-complete { background: var(--complete-bg); color: var(--complete-text); }
 .badge-incomplete { background: var(--incomplete-bg); color: var(--incomplete-text); }
 .badge-not-started { background: var(--not-started-bg); color: var(--not-started-text); border: 1px solid var(--border); }
 .badge-assigned { background: #f1f5f9; color: #475569; border: 1px solid var(--border); font-size: 10.5px; }
@@ -841,7 +841,7 @@ th:hover .col-filter-btn { opacity: .55; }
           <div class="filter-group" id="status-filter-wrap">
             <label class="filter-label">Status Type</label>
             <div class="filter-checkboxes">
-              <label class="filter-checkbox-row"><input type="checkbox" checked> Passed</label>
+              <label class="filter-checkbox-row"><input type="checkbox" checked> Complete</label>
               <label class="filter-checkbox-row"><input type="checkbox" checked> Incomplete</label>
               <label class="filter-checkbox-row"><input type="checkbox" checked> Not Started</label>
             </div>
@@ -1166,7 +1166,7 @@ const DATA = [
     id:1, employee:'Corriveau, Chris', employeeId:'0038027512',
     tasklist:'ILT - Bearings - Level 1 Observation', version:'1.9',
     location:'Shaw Plant 70 / Reliability Technician D', assignedStatus:'Assigned',
-    status:'Passed', tasksRequired:7, totalTasks:11, pct:100, timeSpent:'5 min',
+    status:'Complete', tasksRequired:7, tasksCompleted:11, totalTasks:11, pct:100, timeSpent:'5 min',
     completedDate:'7/22/2024', createdOn:'Apr 15 2024', assignedDate:'Apr 20, 2024',
     tasks:[
       {num:1,desc:'Bearings - ID and Application: Properly measure shaft O.D. using Precision Measurement Tools to the nearest .001 (+/- .003)',req:false,instr:[{by:'Ensley, Brandon',date:'7/22/2024 9:54 AM'},{by:'Thompson, Gary',date:'6/15/2024 2:30 PM'},{by:'Martinez, Ana',date:'5/10/2024 11:00 AM'}],emp:{by:'Corriveau, Chris',date:'6/28/2024 1:08 PM'},comment:''},
@@ -1186,7 +1186,7 @@ const DATA = [
     id:2, employee:'Corriveau, Chris', employeeId:'0038027512',
     tasklist:'ILT - Power Transmission 1 - Level 1 Observation', version:'1.5',
     location:'Shaw Plant 70 / Reliability Technician D', assignedStatus:'Assigned',
-    status:'Passed', tasksRequired:15, totalTasks:15, pct:100, timeSpent:'5 min',
+    status:'Complete', tasksRequired:15, tasksCompleted:15, totalTasks:15, pct:100, timeSpent:'5 min',
     completedDate:'7/22/2024', createdOn:'Apr 15 2024', assignedDate:'Apr 20, 2024',
     tasks:[
       {num:1,desc:'Power Transmission - Identify and demonstrate proper use of all hand tools used in a power transmission application',req:true,instr:{by:'Ensley, Brandon',date:'7/22/2024 10:15 AM'},emp:{by:'Corriveau, Chris',date:'6/28/2024 2:00 PM'},comment:''},
@@ -1198,7 +1198,7 @@ const DATA = [
     id:3, employee:'Corriveau, Chris', employeeId:'0038027512',
     tasklist:'C - Power Transmission - Level 2 Observation', version:'1.9',
     location:'Shaw Plant 70 / Reliability Technician D', assignedStatus:'Assigned',
-    status:'Not Started', tasksRequired:9, totalTasks:9, pct:0, timeSpent:'—',
+    status:'Not Started', tasksRequired:9, tasksCompleted:0, totalTasks:9, pct:0, timeSpent:'—',
     completedDate:null, createdOn:'Aug 3 2022', assignedDate:'Aug 10, 2022',
     tasks:[
       {num:1,desc:'C - Power Transmission - Belt Drive System: Demonstrate the ability to properly measure/size an unknown belt missing from a power transmission system',req:true,instr:null,emp:null,comment:''},
@@ -1212,7 +1212,7 @@ const DATA = [
     id:4, employee:'Corriveau, Chris', employeeId:'0038027512',
     tasklist:'B - Pneumatics - Level 2 Observation', version:'1.4',
     location:'Shaw Plant 70 / Reliability Technician D', assignedStatus:'Assigned',
-    status:'Not Started', tasksRequired:4, totalTasks:4, pct:0, timeSpent:'—',
+    status:'Not Started', tasksRequired:4, tasksCompleted:0, totalTasks:4, pct:0, timeSpent:'—',
     completedDate:null, createdOn:'—', assignedDate:'Mar 15, 2025',
     tasks:[
       {num:1,desc:'B - Pneumatics - System Troubleshooting and Component Replacement: Troubleshoot, identify and replace components in a pneumatic system using a pneumatic print',req:true,instr:null,emp:null,comment:''},
@@ -1225,7 +1225,7 @@ const DATA = [
     id:5, employee:'Williams, Kenderis', employeeId:'0038019005',
     tasklist:'C - Power Transmission - Level 2 Observation', version:'1.9',
     location:'Shaw Plant 70 / Reliability Technician D', assignedStatus:'Assigned',
-    status:'Passed', tasksRequired:9, totalTasks:9, pct:100, timeSpent:'90 min',
+    status:'Complete', tasksRequired:9, tasksCompleted:9, totalTasks:9, pct:100, timeSpent:'90 min',
     completedDate:'4/13/2026', createdOn:'Aug 3 2022', assignedDate:'Sep 1, 2022',
     tasks:[
       {num:1,desc:'C - Power Transmission - Belt Drive System: Demonstrate the ability to properly measure/size an unknown belt missing from a power transmission system',req:true,instr:{by:'Wilson, Chester',date:'4/13/2026 7:18 AM'},emp:{by:'Williams, Kenderis',date:'3/31/2026 4:02 AM'},comment:''},
@@ -1243,7 +1243,7 @@ const DATA = [
     id:6, employee:'Williams, Kenderis', employeeId:'0038019005',
     tasklist:'ILT - Bearings - Level 1 Observation', version:'1.9',
     location:'Shaw Plant 70 / Reliability Technician D', assignedStatus:'Assigned',
-    status:'Passed', tasksRequired:7, totalTasks:11, pct:100, timeSpent:'5 min',
+    status:'Complete', tasksRequired:7, tasksCompleted:11, totalTasks:11, pct:100, timeSpent:'5 min',
     completedDate:'7/22/2024', createdOn:'Apr 15 2024', assignedDate:'Apr 20, 2024',
     tasks:[
       {num:1,desc:'Bearings - ID and Application: Properly measure shaft O.D. using Precision Measurement Tools to the nearest .001 (+/- .003)',req:false,instr:{by:'Wilson, Chester',date:'7/22/2024 9:30 AM'},emp:{by:'Williams, Kenderis',date:'7/20/2024 2:00 PM'},comment:''},
@@ -1255,7 +1255,7 @@ const DATA = [
     id:7, employee:'Johnson, Sarah', employeeId:'0038042110',
     tasklist:'C - Hydraulics - Level 2 Observation', version:'2.1',
     location:'Shaw Plant 70 / Maintenance Technician B', assignedStatus:'Assigned',
-    status:'Passed', tasksRequired:8, totalTasks:10, pct:100, timeSpent:'45 min',
+    status:'Complete', tasksRequired:8, tasksCompleted:10, totalTasks:10, pct:100, timeSpent:'45 min',
     completedDate:'3/15/2026', createdOn:'Jan 10 2025', assignedDate:'Jan 15, 2025',
     tasks:[
       {num:1,desc:'Hydraulics - Identify and describe the function of each component in a hydraulic system',req:true,instr:{by:'Ensley, Brandon',date:'3/15/2026 8:00 AM'},emp:{by:'Johnson, Sarah',date:'3/10/2026 2:00 PM'},comment:''},
@@ -1266,7 +1266,7 @@ const DATA = [
     id:8, employee:'Johnson, Sarah', employeeId:'0038042110',
     tasklist:'ILT - Precision Measurement - Level 1 Observation', version:'1.3',
     location:'Shaw Plant 70 / Maintenance Technician B', assignedStatus:'Assigned',
-    status:'Incomplete', tasksRequired:6, totalTasks:8, pct:50, timeSpent:'20 min',
+    status:'Incomplete', tasksRequired:6, tasksCompleted:4, totalTasks:8, pct:50, timeSpent:'20 min',
     completedDate:null, createdOn:'Feb 5 2025', assignedDate:'Feb 12, 2025',
     tasks:[
       {num:1,desc:'Precision Measurement - Demonstrate proper use of a digital caliper',req:true,instr:{by:'Wilson, Chester',date:'2/20/2026 10:00 AM'},emp:{by:'Johnson, Sarah',date:'2/18/2026 1:00 PM'},comment:''},
@@ -1278,7 +1278,7 @@ const DATA = [
     id:9, employee:'Rodriguez, Marcus', employeeId:'0038031247',
     tasklist:'D - Power Transmission - Level 2 Observation', version:'1.7',
     location:'Shaw Plant 70 / Electrical Technician C', assignedStatus:'Assigned',
-    status:'Passed', tasksRequired:12, totalTasks:14, pct:100, timeSpent:'60 min',
+    status:'Complete', tasksRequired:12, tasksCompleted:14, totalTasks:14, pct:100, timeSpent:'60 min',
     completedDate:'1/28/2026', createdOn:'Sep 12 2024', assignedDate:'Sep 20, 2024',
     tasks:[
       {num:1,desc:'Power Transmission - Demonstrate proper installation of a flexible coupling',req:true,instr:{by:'Thompson, Gary',date:'1/28/2026 9:00 AM'},emp:{by:'Rodriguez, Marcus',date:'1/25/2026 3:00 PM'},comment:''},
@@ -1289,7 +1289,7 @@ const DATA = [
     id:10, employee:'Rodriguez, Marcus', employeeId:'0038031247',
     tasklist:'B - Pneumatics - Level 2 Observation', version:'1.4',
     location:'Shaw Plant 70 / Electrical Technician C', assignedStatus:'Enrolled',
-    status:'Not Started', tasksRequired:4, totalTasks:4, pct:0, timeSpent:'—',
+    status:'Not Started', tasksRequired:4, tasksCompleted:0, totalTasks:4, pct:0, timeSpent:'—',
     completedDate:null, createdOn:'—', assignedDate:'Apr 1, 2025',
     tasks:[
       {num:1,desc:'Pneumatics - Troubleshoot a pneumatic circuit using a schematic',req:true,instr:null,emp:null,comment:''},
@@ -1300,7 +1300,7 @@ const DATA = [
     id:11, employee:'Thompson, Gary', employeeId:'0038017892',
     tasklist:'C - PipingPlumbingPumps - Level 2 Observation', version:'1.2',
     location:'Shaw Plant 70 / Reliability Technician D', assignedStatus:'Assigned',
-    status:'Passed', tasksRequired:10, totalTasks:12, pct:100, timeSpent:'75 min',
+    status:'Complete', tasksRequired:10, tasksCompleted:12, totalTasks:12, pct:100, timeSpent:'75 min',
     completedDate:'2/14/2026', createdOn:'Oct 30 2024', assignedDate:'Nov 5, 2024',
     tasks:[
       {num:1,desc:'Piping - Identify pipe materials, fittings, and their appropriate applications',req:true,instr:{by:'Ensley, Brandon',date:'2/14/2026 11:00 AM'},emp:{by:'Thompson, Gary',date:'2/11/2026 9:00 AM'},comment:''},
@@ -1311,7 +1311,7 @@ const DATA = [
     id:12, employee:'Corriveau, Chris', employeeId:'0038027512',
     tasklist:'ILT - Power Transmission - Precision Alignment - Level 1 Observation', version:'1.1',
     location:'Shaw Plant 70 / Reliability Technician D', assignedStatus:'Assigned',
-    status:'Passed', tasksRequired:5, totalTasks:6, pct:100, timeSpent:'30 min',
+    status:'Complete', tasksRequired:5, tasksCompleted:6, totalTasks:6, pct:100, timeSpent:'30 min',
     completedDate:'11/5/2025', createdOn:'Aug 1 2025', assignedDate:'Aug 8, 2025',
     tasks:[
       {num:1,desc:'Alignment - Demonstrate the rough alignment procedure using a straightedge and feeler gauges',req:true,instr:{by:'Ensley, Brandon',date:'11/5/2025 7:00 AM'},emp:{by:'Corriveau, Chris',date:'11/3/2025 1:30 PM'},comment:''},
@@ -1322,7 +1322,7 @@ const DATA = [
     id:13, employee:'Williams, Kenderis', employeeId:'0038019005',
     tasklist:'ILT - Power Transmission 1 - Level 1 Observation', version:'1.5',
     location:'Shaw Plant 70 / Reliability Technician D', assignedStatus:'Assigned',
-    status:'Incomplete', tasksRequired:15, totalTasks:15, pct:40, timeSpent:'15 min',
+    status:'Incomplete', tasksRequired:15, tasksCompleted:6, totalTasks:15, pct:40, timeSpent:'15 min',
     completedDate:null, createdOn:'Apr 15 2024', assignedDate:'Apr 20, 2024',
     tasks:[
       {num:1,desc:'Power Transmission - Identify and demonstrate proper use of all hand tools',req:true,instr:{by:'Wilson, Chester',date:'10/10/2025 9:00 AM'},emp:{by:'Williams, Kenderis',date:'10/8/2025 2:30 PM'},comment:''},
@@ -1333,7 +1333,7 @@ const DATA = [
     id:14, employee:'Martinez, Ana', employeeId:'0038055301',
     tasklist:'D - ToolsFasteners - Level 2 Observation', version:'1.0',
     location:'Shaw Plant 70 / Process Technician A', assignedStatus:'Enrolled',
-    status:'Not Started', tasksRequired:5, totalTasks:5, pct:0, timeSpent:'—',
+    status:'Not Started', tasksRequired:5, tasksCompleted:0, totalTasks:5, pct:0, timeSpent:'—',
     completedDate:null, createdOn:'—', assignedDate:'Feb 1, 2025',
     tasks:[
       {num:1,desc:'Tools - Demonstrate proper use of a torque wrench to specified values',req:true,instr:null,emp:null,comment:''},
@@ -1344,7 +1344,7 @@ const DATA = [
     id:15, employee:'Thompson, Gary', employeeId:'0038017892',
     tasklist:'C - Measurement - Level 2 Observation', version:'1.6',
     location:'Shaw Plant 70 / Reliability Technician D', assignedStatus:'Assigned',
-    status:'Passed', tasksRequired:7, totalTasks:8, pct:100, timeSpent:'35 min',
+    status:'Complete', tasksRequired:7, tasksCompleted:8, totalTasks:8, pct:100, timeSpent:'35 min',
     completedDate:'4/2/2026', createdOn:'Dec 15 2024', assignedDate:'Dec 20, 2024',
     tasks:[
       {num:1,desc:'Measurement - Demonstrate proper zeroing and use of a CMM to measure a machined part',req:true,instr:{by:'Ensley, Brandon',date:'4/2/2026 8:30 AM'},emp:{by:'Thompson, Gary',date:'3/30/2026 11:00 AM'},comment:''},
@@ -1355,7 +1355,7 @@ const DATA = [
     id:16, employee:'Martinez, Ana', employeeId:'0038055301',
     tasklist:'ILT - Bearings - Level 1 Observation', version:'1.9',
     location:'Shaw Plant 70 / Process Technician A', assignedStatus:'Assigned',
-    status:'Passed', tasksRequired:7, totalTasks:11, pct:100, timeSpent:'25 min',
+    status:'Complete', tasksRequired:7, tasksCompleted:11, totalTasks:11, pct:100, timeSpent:'25 min',
     completedDate:'5/1/2026', createdOn:'Apr 15 2024', assignedDate:'Apr 22, 2024',
     tasks:[
       {num:1,desc:'Bearings - ID and Application: Properly measure shaft O.D. using Precision Measurement Tools to the nearest .001 (+/- .003)',req:false,instr:{by:'Martinez, Ana',date:'5/1/2026 10:00 AM'},emp:{by:'Martinez, Ana',date:'4/28/2026 3:00 PM'},comment:''},
@@ -1372,7 +1372,8 @@ const COL_CONFIGS = {
   tasklist:        { label: 'Tasklist',         type: 'text'  },
   employee:        { label: 'Employee',         type: 'text'  },
   location:        { label: 'Location',         type: 'text'  },
-  status:          { label: 'Status',           type: 'check', options: ['Passed', 'Incomplete', 'Not Started'] },
+  status:          { label: 'Status',           type: 'check', options: ['Complete', 'Incomplete', 'Not Started'] },
+  tasksCompleted:  { label: 'Tasks Completed',  type: 'text'  },
   completedDate:   { label: 'Completed Date',   type: 'text'  },
   timeSpent:       { label: 'Time Spent',       type: 'text'  },
   tasksRequired:   { label: 'Tasks Required',   type: 'text'  },
@@ -1382,24 +1383,26 @@ const COL_CONFIGS = {
 };
 
 const GRID_COLS = [
-  { key: '_expand',        label: '',                minWidth: 32,  locked: true },
-  { key: 'tasklist',       label: 'Tasklist',        filterKey: 'tasklist',       minWidth: 220, sortable: true, locked: true },
-  { key: 'employee',       label: 'Employee',        filterKey: 'employee',       minWidth: 140, locked: true },
-  { key: 'location',       label: 'Location',        filterKey: 'location',       minWidth: 180 },
-  { key: 'status',         label: 'Status',          filterKey: 'status',         minWidth: 100 },
-  { key: 'pct',            label: '% Complete',                                   minWidth: 110 },
-  { key: 'completedDate',  label: 'Completed Date',  filterKey: 'completedDate',  minWidth: 130 },
-  { key: 'timeSpent',      label: 'Time Spent',      filterKey: 'timeSpent',      minWidth: 110 },
-  { key: 'checkoffType',   label: 'Check-off Type',                               minWidth: 195 },
-  { key: 'tasksRequired',  label: 'Tasks Required',  filterKey: 'tasksRequired',  minWidth: 130 },
-  { key: 'assignmentDate', label: 'Assignment Date', filterKey: 'assignmentDate', minWidth: 140 },
-  { key: 'tasklistCreated',label: 'Tasklist Created',filterKey: 'tasklistCreated',minWidth: 150 },
-  { key: 'assigned',       label: 'Assigned',        filterKey: 'assigned',       minWidth: 100 },
+  { key: '_expand',           label: '',                          minWidth: 32,  locked: true },
+  { key: 'tasklist',          label: 'Tasklist',                  filterKey: 'tasklist',       minWidth: 220, sortable: true, locked: true },
+  { key: 'employee',          label: 'Employee',                  filterKey: 'employee',       minWidth: 140, locked: true },
+  { key: 'location',          label: 'Location',                  filterKey: 'location',       minWidth: 180 },
+  { key: 'status',            label: 'Status',                    filterKey: 'status',         minWidth: 110 },
+  { key: 'tasksRequired',     label: 'Tasks Required',            filterKey: 'tasksRequired',  minWidth: 130 },
+  { key: 'pct',               label: 'Required Tasks Completed %',                             minWidth: 190 },
+  { key: 'tasksCompleted',    label: 'Tasks Completed',           filterKey: 'tasksCompleted', minWidth: 140 },
+  { key: 'tasksCompletedBar', label: 'Tasks Completed %',                                      minWidth: 160 },
+  { key: 'completedDate',     label: 'Completed Date',            filterKey: 'completedDate',  minWidth: 130 },
+  { key: 'timeSpent',         label: 'Time Spent',                filterKey: 'timeSpent',      minWidth: 110 },
+  { key: 'assigned',          label: 'Assigned',                  filterKey: 'assigned',       minWidth: 100 },
+  { key: 'assignmentDate',    label: 'Assignment Date',           filterKey: 'assignmentDate', minWidth: 140 },
+  { key: 'tasklistCreated',   label: 'Tasklist Created',          filterKey: 'tasklistCreated',minWidth: 150 },
+  { key: 'checkoffType',      label: 'Check-off Type',                                         minWidth: 195 },
 ];
 
 const columnFilters = {
   tasklist: '', employee: '', location: '', status: [],
-  completedDate: '', timeSpent: '', tasksRequired: '',
+  completedDate: '', timeSpent: '', tasksRequired: '', tasksCompleted: '',
   assignmentDate: '', tasklistCreated: '', assigned: []
 };
 
@@ -1415,6 +1418,7 @@ function getFilteredData() {
   if (columnFilters.completedDate) data = data.filter(r => (r.completedDate || '—').toLowerCase().includes(columnFilters.completedDate.toLowerCase()));
   if (columnFilters.timeSpent) data = data.filter(r => r.timeSpent.toLowerCase().includes(columnFilters.timeSpent.toLowerCase()));
   if (columnFilters.tasksRequired) data = data.filter(r => `${r.tasksRequired} of ${r.totalTasks}`.includes(columnFilters.tasksRequired));
+  if (columnFilters.tasksCompleted) data = data.filter(r => `${r.tasksCompleted} of ${r.totalTasks}`.includes(columnFilters.tasksCompleted));
   if (columnFilters.assignmentDate) data = data.filter(r => (r.assignedDate || '—').toLowerCase().includes(columnFilters.assignmentDate.toLowerCase()));
   if (columnFilters.tasklistCreated) data = data.filter(r => (r.createdOn || '—').toLowerCase().includes(columnFilters.tasklistCreated.toLowerCase()));
   if (columnFilters.assigned.length > 0) data = data.filter(r => columnFilters.assigned.includes(r.assignedStatus));
@@ -1515,7 +1519,7 @@ function hideTooltip() {
 
 // ── Helpers ──
 function badge(status) {
-  const m = {Passed:'badge-passed',Incomplete:'badge-incomplete','Not Started':'badge-not-started'};
+  const m = {Complete:'badge-complete',Incomplete:'badge-incomplete','Not Started':'badge-not-started'};
   return `<span class="badge ${m[status]||'badge-not-started'}">${status}</span>`;
 }
 function progressBar(pct) {
@@ -1604,7 +1608,9 @@ function buildCell(col, row) {
     case 'completedDate':  return `<td style="color:var(--text-secondary)">${row.completedDate || '—'}</td>`;
     case 'timeSpent':      return `<td>${row.timeSpent}</td>`;
     case 'checkoffType':   return `<td>Instructor AND Employee</td>`;
-    case 'tasksRequired':  return `<td>${row.tasksRequired} of ${row.totalTasks}</td>`;
+    case 'tasksRequired':      return `<td>${row.tasksRequired} of ${row.totalTasks}</td>`;
+    case 'tasksCompleted':     return `<td>${row.tasksCompleted} of ${row.totalTasks}</td>`;
+    case 'tasksCompletedBar':  return `<td>${progressBar(Math.round(row.tasksCompleted / row.totalTasks * 100))}</td>`;
     case 'assignmentDate': return `<td>${row.assignedDate || '—'}</td>`;
     case 'tasklistCreated':return `<td>${row.createdOn || '—'}</td>`;
     case 'assigned':       return `<td><span class="badge badge-assigned">${row.assignedStatus}</span></td>`;
