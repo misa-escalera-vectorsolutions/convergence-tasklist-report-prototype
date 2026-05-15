@@ -766,25 +766,6 @@ th:hover .col-filter-btn { opacity: .55; }
                 <vwc-icon path="M19,21L12,18L5,21V5C5,3.89 5.9,3 7,3H17A2,2 0 0,1 19,5M17,5H7V17L12,14.82L17,17V5Z" slot="prefix"></vwc-icon>
                 Apply Saved View
               </vaadin-button>
-              <div class="col-chooser-wrap" id="colChooserWrap">
-                <button class="col-chooser-btn" onclick="toggleColChooser()">
-                  <i class="fa-solid fa-table-columns"></i>
-                  Configure Columns
-                </button>
-                <div class="col-chooser-panel" id="colChooserPanel">
-                  <div class="col-chooser-hd">
-                    <span class="col-chooser-hd-title">Column Chooser</span>
-                    <button class="info-tip" onclick="closeColChooser()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-                  </div>
-                  <input type="text" class="col-chooser-search" id="colChooserSearch" placeholder="Search column" oninput="renderColChooserList(this.value)">
-                  <div class="col-chooser-actions">
-                    <button class="col-chooser-act" onclick="selectAllCols()">Select All</button>
-                    <span class="col-chooser-sep">|</span>
-                    <button class="col-chooser-act" onclick="clearAllCols()">Clear All</button>
-                  </div>
-                  <div class="col-chooser-list" id="colChooserList"></div>
-                </div>
-              </div>
               <button class="filter-reveal-btn" onclick="toggleFilterPanel()" title="Show filters" aria-label="Show filters">
                 <i class="fa-solid fa-filter"></i>
               </button>
@@ -792,9 +773,28 @@ th:hover .col-filter-btn { opacity: .55; }
           </div>
         </div>
 
-        <!-- Section date -->
-        <div style="margin-bottom:10px;">
+        <!-- Section date + grid toolbar -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
           <div class="section-date"><i class="fa-solid fa-check" style="font-size:10px;"></i> Nov 1, 2025 — Apr 30, 2026<button class="info-tip" data-tip-key="dateRange" onmouseenter="showTooltip(this)" onmouseleave="hideTooltip()" aria-label="Date range info" style="margin-left:5px;"><i class="fa-solid fa-circle-info"></i></button></div>
+          <div class="col-chooser-wrap" id="colChooserWrap">
+            <button class="col-chooser-btn" onclick="toggleColChooser()">
+              <i class="fa-solid fa-table-columns"></i>
+              Customize Columns
+            </button>
+            <div class="col-chooser-panel" id="colChooserPanel">
+              <div class="col-chooser-hd">
+                <span class="col-chooser-hd-title">Column Chooser</span>
+                <button class="info-tip" onclick="closeColChooser()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+              </div>
+              <input type="text" class="col-chooser-search" id="colChooserSearch" placeholder="Search column" oninput="renderColChooserList(this.value)">
+              <div class="col-chooser-actions">
+                <button class="col-chooser-act" onclick="selectAllCols()">Select All</button>
+                <span class="col-chooser-sep">|</span>
+                <button class="col-chooser-act" onclick="clearAllCols()">Clear All</button>
+              </div>
+              <div class="col-chooser-list" id="colChooserList"></div>
+            </div>
+          </div>
         </div>
 
         <div class="grid-wrap">
